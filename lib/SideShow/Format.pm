@@ -19,7 +19,7 @@ sub ss_doc_format
   
   my $text = ss_doc_read( $dn );
   
-  $text =~ s/\[([#])([a-z_0-9\-]+)\]/__item( $1, $2 )/gie;
+  $text =~ s/\[([#\*])([a-z_0-9\-]+)\]/__item( $1, $2 )/gie;
   
   return $text;
 }
@@ -38,6 +38,17 @@ sub __item
     else
       {
       return "<a reactor_new_href=?action=edit&doc=$item>[create: $item]</a>";
+      }  
+    }
+  if( $type eq '*' )
+    {
+    if( ss_doc_exists( $item ) )
+      {
+      return "<img reactor_new_src=?action=showimg&doc=$item>";
+      }
+    else
+      {
+      return "<a reactor_new_href=?action=upload&doc=$item>[upload image: $item]</a>";
       }  
     }
   else
