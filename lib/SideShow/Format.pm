@@ -20,6 +20,7 @@ sub ss_doc_format
   my $text = ss_doc_read( $dn );
   
   $text =~ s/\[([#\*])([a-z_0-9\-]+)\]/__item( $1, $2 )/gie;
+  $text =~ s/\n/<br>\n/sg;
   
   return $text;
 }
