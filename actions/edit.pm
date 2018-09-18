@@ -63,6 +63,7 @@ sub main
     }  
   my $form_text = html_form_engine_display( $reo, $form_def, NAME => 'EDIT', INPUT_DATA => $form_data, INPUT_ERRORS => $form_errors );
 
+  $text .= "<h2>Editing doc: $doc</h2>";
   $text .= $form_text;
   
   return $text;

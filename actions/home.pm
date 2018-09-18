@@ -1,6 +1,7 @@
 package reactor::actions::home;
 use strict;
 use SideShow::File;
+use SideShow::Format;
 
 sub main
 {
@@ -14,10 +15,10 @@ sub main
   
   $text .= "hello worlds";
 
-  $text .= "<p><a reactor_new_href=?action=edit&doc=$doc>[edit]</a><p>";
+  $text .= "<p><a reactor_back_href=?>[back]</a> | <a reactor_new_href=?action=edit&doc=$doc>[edit]</a><p>";
   if( ss_doc_exists( $doc ) )
     {
-    $text .= ss_doc_read( $doc );
+    $text .= ss_doc_format( $doc );
     }
   else
     {
