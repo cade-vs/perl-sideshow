@@ -24,46 +24,60 @@ sub main
   if( $reo->get_input_form_name() eq 'UPLOAD' and $reo->get_input_button() eq 'OK' )
     {
     my $in = $reo->get_user_input();
-    my $text = $in->{ 'TEXT' };
-    ss_doc_write( $doc, $text );
-
+    my $des         = $in->{ 'DES' };
     my $file_name   = $in->{ 'FILE' };
     my $file_handle = $in->{ 'FILE:FH' };
     my $file_info   = $in->{ 'FILE:UPLOAD_INFO' };
-    binmode( $file_handle );
-    local $/ = undef;
-    my $file_body = <$file_handle>;
-    ss_doc_write( $doc, $file_body, { TYPE => 'BIN', MIME => $file_info->{ 'Content-Type' } } );
-    
-    print STDERR "body length: " . length($file_body) . " ******************\n";
+
+    if( $file_name )
+      {
+      binmode( $file_handle );
+      local $/ = undef;
+      my $file_body = <$file_handle>;
+      my $file_len  = length( $file_body );
+      ss_doc_write( $doc, $file_body, { TYPE => 'BIN', MIME => $file_info->{ 'Content-Type' }, LEN => $file_len, DES => $des } );
+      }
+    else
+      {
+      # update only description
+      my $ds = ss_doc_read_des( $doc );
+      $ds->{ 'DES' } = $des;
+      ss_doc_write_des( $doc, $ds );
+      }  
 
     return $reo->forward_back();
+    }
+
+  my $des;
+  if( ss_doc_exists( $doc ) )
+    {
+    $des = ss_doc_read_des( $doc );
     }
   
   my $form_def = [
                   {
                     NAME  => 'FILE',
                     TYPE  => 'FILE',
-                    LABEL => 'File upload test',
+                    LABEL => 'Upload new file version',
                   },
                   {
-                    NAME  => 'TEXT',
+                    NAME  => 'DES',
                     TYPE  => 'TEXT',
                     COLS  => '64',
                     ROWS  => '4',
-                    LABEL => 'Document text',
-                  },
-                  {
-                    NAME  => 'CANCEL',
-                    TYPE  => 'BUTTON',
-                    LABEL => '',
-                    VALUE => 'CANCEL',
+                    LABEL => 'Document description',
                   },
                   {
                     NAME  => 'OK',
                     TYPE  => 'BUTTON',
                     LABEL => '',
                     VALUE => 'OK',
+                  },
+                  {
+                    NAME  => 'CANCEL',
+                    TYPE  => 'BUTTON',
+                    LABEL => '',
+                    VALUE => 'CANCEL',
                   },
                 ];
 
@@ -75,10 +89,11 @@ sub main
   else
     {
     $form_data = $page_session_hr->{ 'FORM_INPUT_DATA' }{ 'UPLOAD' };
+    $form_data->{ 'DES' } = $des->{ 'DES' };
     }  
   my $form_text = html_form_engine_display( $reo, $form_def, NAME => 'UPLOAD', INPUT_DATA => $form_data, INPUT_ERRORS => $form_errors );
 
-  $text .= "<h2>Uploading doc: $doc</h2>";
+  $text .= "<h2>Updating detauls for document: $doc</h2>";
   $text .= $form_text;
   
   return $text;

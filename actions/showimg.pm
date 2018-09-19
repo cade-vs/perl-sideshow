@@ -15,7 +15,8 @@ sub main
   
   if( ss_doc_exists( $doc ) )
     {
-    $reo->render_data( ss_doc_read( $doc ), 'image/jpeg' );
+    my ( $data, $des ) = ss_doc_read( $doc );
+    $reo->render_data( $data, $des->{ 'MIME' } );
     }
   else
     {

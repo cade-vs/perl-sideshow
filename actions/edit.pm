@@ -25,7 +25,7 @@ sub main
     {
     my $in = $reo->get_user_input();
     my $text = $in->{ 'TEXT' };
-    ss_doc_write( $doc, $text );
+    ss_doc_write( $doc, $text, { TYPE => 'TEXT' } );
     return $reo->forward_back();
     }
   
@@ -38,16 +38,16 @@ sub main
                     LABEL => 'Document text',
                   },
                   {
-                    NAME  => 'CANCEL',
-                    TYPE  => 'BUTTON',
-                    LABEL => '',
-                    VALUE => 'CANCEL',
-                  },
-                  {
                     NAME  => 'OK',
                     TYPE  => 'BUTTON',
                     LABEL => '',
                     VALUE => 'OK',
+                  },
+                  {
+                    NAME  => 'CANCEL',
+                    TYPE  => 'BUTTON',
+                    LABEL => '',
+                    VALUE => 'CANCEL',
                   },
                 ];
 
@@ -59,11 +59,11 @@ sub main
   else
     {
     $form_data = $page_session_hr->{ 'FORM_INPUT_DATA' }{ 'EDIT' };
-    $form_data->{ 'TEXT' } = ss_doc_read( $doc );
+    $form_data->{ 'TEXT' } = ss_doc_read_text( $doc ) if ss_doc_exists( $doc );
     }  
   my $form_text = html_form_engine_display( $reo, $form_def, NAME => 'EDIT', INPUT_DATA => $form_data, INPUT_ERRORS => $form_errors );
 
-  $text .= "<h2>Editing doc: $doc</h2>";
+  $text .= "<h2>Editing text document: $doc</h2>";
   $text .= $form_text;
   
   return $text;
