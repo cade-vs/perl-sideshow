@@ -14,6 +14,7 @@ my %cfg = (
           'SESS_VAR_DIR'   => "$ROOT/var/sess/",
           'REO_ACTS_CLASS' => 'Web::Reactor::Actions::Alt',
           'DEBUG'          => 1,
+          'DISABLE_SECURE_COOKIES'  => 1,
           );
 
 eval 

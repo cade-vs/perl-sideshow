@@ -19,24 +19,40 @@ sub ss_doc_format
   
   my ( $text, $des ) = ss_doc_read_text( $dn );
 
-  my @text = split /\n/, $text;
-  for( @text )
+  my $plain;
+  my @in  = split /\n/, $text;
+  my @out;
+  while( @in )
     {
-    if( /^\s*=h(\d)\s*(.*)/ )
+    my $line = shift @in;
+    if( $line =~ /^\s*=cut/i )
       {
-      $_ = "<h$1>$2</h$1>\n";
+      $plain = ! $plain;
       next;
       }
-    if( /^\s*$/ )
+    if( $plain )
       {
-      $_ = "<br>\n";
+      push @out, $line;
       next;
       }
-  
-    s/\[([#\*])([a-z_0-9\-]+)(\s*(.*))?\]/__item( $1, $2, $3 )/gie;
+    if( $line =~ /^\s*=h(\d)\s*(.*)/i )
+      {
+      my $t = inline_formatting( $2 );
+      push @out, "<h$1>$t</h$1>\n";
+      next;
+      }
+    if( $line =~ /^\s*$/ )
+      {
+      push @out, "<br>\n";
+      next;
+      }
+
+    $line =~ s/\[([#\*]+)([a-z_0-9\-]+)(\s*(.*))?\]/__item( $1, $2, $3 )/gie;
+    $line = inline_formatting( $line );
+    push @out, $line;
     }
   
-  return join '', @text;
+  return join '', @out;
 }
 
 sub __item
@@ -79,6 +95,15 @@ sub __item
     {
     return undef;
     }  
+}
+
+sub inline_formatting
+{
+  my $text = shift;
+  
+  $text =~ s/\*\*(.+?)\*\*/<b>$1<\/b>/g;
+  $text =~ s/__(.+?)__/<tt>$1<\/tt>/g;
+  return $text;
 }
 
 1;
