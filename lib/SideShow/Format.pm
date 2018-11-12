@@ -63,8 +63,7 @@ sub __item
   
   if( $type eq '#' )
     {
-    my $name = $args || $item;
-    # FIXME: text formatting for $name
+    my $name = inline_formatting( $args || $item );
     if( ss_doc_exists( $item ) )
       {
       return "<a reactor_new_href=?action=home&doc=$item>$name</a>";
