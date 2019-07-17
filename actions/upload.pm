@@ -9,6 +9,8 @@ sub main
   my $reo = shift;
 
   my $in = $reo->is_logged_in();
+  return "Access denied" unless $in;
+
   my $page_session_hr = $reo->get_page_session();                                                                               
 
   my $text;
